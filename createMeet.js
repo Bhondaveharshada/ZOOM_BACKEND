@@ -2,14 +2,13 @@ const express = require('express');
 const axios = require('axios');
 const router = express.Router()
 const app = express();
+
 const ZOOM_API_KEY = 'v_ILNsd6RIaXDo60R4yviQ';
 const ZOOM_API_SECRET = 'UGpRsljbTZ4MztYHAlefPaVkHpWxVr95';
 const ZOOM_USER_ID = 'SjU14zZjR326xAo69glG3Q';
-const yourZoomJwtToken = 'eyJzdiI6IjAwMDAwMSIsImFsZyI6IkhTNTEyIiwidiI6IjIuMCIsImtpZCI6IjI3M2Q1MWMwLTJjNDctNDhmNi1hNTkzLThmYmIyOTA5MjhkOSJ9.eyJ2ZXIiOjEwLCJhdWlkIjoiOTk1OTM1Y2I3NzNjODA5YzFkMjYwNmY3ZWU5MGU4OGM1YTJhNDlmZjZiYTJkMGU4ZjI3YjQ5YTA2YzMyYzhlNiIsImNvZGUiOiJtMG1KdFJwZWc5MWtmNllSSmZOUW1XVm1RdmRtTXVmR3ciLCJpc3MiOiJ6bTpjaWQ6dl9JTE5zZDZSSWFYRG82MFI0eXZpUSIsImdubyI6MCwidHlwZSI6MCwidGlkIjowLCJhdWQiOiJodHRwczovL29hdXRoLnpvb20udXMiLCJ1aWQiOiJTalUxNHpaalIzMjZ4QW82OWdsRzNRIiwibmJmIjoxNzI2OTE1NTY1LCJleHAiOjE3MjY5MTkxNjUsImlhdCI6MTcyNjkxNTU2NSwiYWlkIjoiZmhTbVpOeW5SUjZScl9kT25qNjhldyJ9.FixsJ7wjQ7YHm-DIB3vJyS5-nFeylp7gX4yajWQZfuRAjkW2zlQgWEJUn7LCRZsh8fjxHYYT3D0y2j20GIX30w'
+//const yourZoomJwtToken = 'eyJzdiI6IjAwMDAwMSIsImFsZyI6IkhTNTEyIiwidiI6IjIuMCIsImtpZCI6IjI3M2Q1MWMwLTJjNDctNDhmNi1hNTkzLThmYmIyOTA5MjhkOSJ9.eyJ2ZXIiOjEwLCJhdWlkIjoiOTk1OTM1Y2I3NzNjODA5YzFkMjYwNmY3ZWU5MGU4OGM1YTJhNDlmZjZiYTJkMGU4ZjI3YjQ5YTA2YzMyYzhlNiIsImNvZGUiOiJtMG1KdFJwZWc5MWtmNllSSmZOUW1XVm1RdmRtTXVmR3ciLCJpc3MiOiJ6bTpjaWQ6dl9JTE5zZDZSSWFYRG82MFI0eXZpUSIsImdubyI6MCwidHlwZSI6MCwidGlkIjowLCJhdWQiOiJodHRwczovL29hdXRoLnpvb20udXMiLCJ1aWQiOiJTalUxNHpaalIzMjZ4QW82OWdsRzNRIiwibmJmIjoxNzI2OTE1NTY1LCJleHAiOjE3MjY5MTkxNjUsImlhdCI6MTcyNjkxNTU2NSwiYWlkIjoiZmhTbVpOeW5SUjZScl9kT25qNjhldyJ9.FixsJ7wjQ7YHm-DIB3vJyS5-nFeylp7gX4yajWQZfuRAjkW2zlQgWEJUn7LCRZsh8fjxHYYT3D0y2j20GIX30w'
+const {yourZoomJwtToken} = require('./token')
 
- accessToken = async ()=>{
-
- }
 
 
  getZakToken = async () => {
@@ -26,6 +25,27 @@ const yourZoomJwtToken = 'eyJzdiI6IjAwMDAwMSIsImFsZyI6IkhTNTEyIiwidiI6IjIuMCIsIm
     console.error('Error fetching Zak Token:', error);
   }
 };
+
+
+router.get('/get-meeting', async (req,res)=>{
+  try{
+    const response =  await axios.get('https://api.zoom.us/v2/users/me/meetings',{
+     headers:{
+         'Authorization': `Bearer ${yourZoomJwtToken}`
+     }
+    });
+    const data =  response.data
+    
+   // console.log(data);
+    
+    return data
+ }catch(error){
+     console.error("Error",error);
+     
+ }
+})
+
+
 
 router.post('/create-meeting', async (req, res) => {
     
@@ -76,5 +96,5 @@ router.post('/create-meeting', async (req, res) => {
   }
 });
 
-module.exports = router
+module.exports = router  
 

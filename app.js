@@ -1,6 +1,8 @@
+require('dotenv').config()
 const express = require("express");
-const createmeeetRouter = require('./createMeet')
-const signatureRouter = require('./signature')
+const createmeeetRouter = require('./createMeet');
+const signatureRouter = require('./signature');
+const tokenRouter = require('./token')
 const app = express();
 const bodyParser = require("body-parser")
 const cors = require('cors');
@@ -21,10 +23,13 @@ app.use((req,res,next)=>{
    next()
   })
 
+
+  
 app.use('/',createmeeetRouter)
 app.use('/',signatureRouter)
+app.use('/',tokenRouter)
 
-module.exports  = app
+module.exports  = app 
 
 
 

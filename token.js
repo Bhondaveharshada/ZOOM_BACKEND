@@ -1,68 +1,48 @@
-/* const axios = require('axios');
-const jwt = require('jsonwebtoken');
+require('dotenv').config();
+const express = require('express');
+const axios = require('axios');
+const router = express.Router()
+const qs = require('querystring');
 
-// Zoom API details
-const ZOOM_API_KEY = 'v_ILNsd6RIaXDo60R4yviQ';
-const ZOOM_API_SECRET = 'UGpRsljbTZ4MztYHAlefPaVkHpWxVr95';
-const ZOOM_USER_LIST_API = 'https://api.zoom.us/v2/users';
+let yourZoomJwtToken = null;
+  let refreshToken = null;
+  
+  // Step 1: Redirect user to the Zoom authorization URL
+  router.get('/authorize', (req, res) => {
+    const redirectUri = 'http://localhost:4000/';
+    const clientId = 'v_ILNsd6RIaXDo60R4yviQ'; // Your actual client_id
 
-// Generate Zoom JWT Token
-function generateZoomJwtToken() {
-  const payload = {
-    iss: ZOOM_API_KEY,
-    exp: Math.floor(Date.now() / 1000) + 60 // Token expiration in seconds
-  };
-  return jwt.sign(payload, ZOOM_API_SECRET, { algorithm: 'HS256' });
-}
-
-async function getUsers() {
-  try {
-    const token = generateZoomJwtToken();
-    console.log("token is", token);
+    const zoomAuthUrl = encodeURI(`https://zoom.us/oauth/authorize?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}`);
     
+    res.redirect(zoomAuthUrl);
+  });
 
-    const response = await axios.get(ZOOM_USER_LIST_API, {
-      headers: {
-        'Authorization': `Bearer eyJzdiI6IjAwMDAwMSIsImFsZyI6IkhTNTEyIiwidiI6IjIuMCIsImtpZCI6ImNhOThkNzAzLWNhNDEtNGQwMy04OTk3LTE2NjQxMGFiMTJmMSJ9.eyJ2ZXIiOjEwLCJhdWlkIjoiOTk1OTM1Y2I3NzNjODA5YzFkMjYwNmY3ZWU5MGU4OGM1YTJhNDlmZjZiYTJkMGU4ZjI3YjQ5YTA2YzMyYzhlNiIsImNvZGUiOiJXMWw0bndETWpJOHNSTUVRcHhHUjlxZTdmTWh1c2dMd0EiLCJpc3MiOiJ6bTpjaWQ6dl9JTE5zZDZSSWFYRG82MFI0eXZpUSIsImdubyI6MCwidHlwZSI6MCwidGlkIjowLCJhdWQiOiJodHRwczovL29hdXRoLnpvb20udXMiLCJ1aWQiOiJTalUxNHpaalIzMjZ4QW82OWdsRzNRIiwibmJmIjoxNzI2ODMyNDYxLCJleHAiOjE3MjY4MzYwNjEsImlhdCI6MTcyNjgzMjQ2MSwiYWlkIjoiZmhTbVpOeW5SUjZScl9kT25qNjhldyJ9.V-kUgXcOrU1vg2pAy7ZZMH79BnwaA8UgK3jD4-_t8G6Rz53ZrT6f3FnUoWgOmeTQq-mS_OjPzIvbm7wJ1etspg`,  // Use the generated JWT token
-        'Content-Type': 'application/json',
-      },
-    });
-
-    const users = response.data.users;
-    users.forEach(user => {
-      console.log(`User ID: ${user.id}, Email: ${user.email}`);
-    });
-  } catch (error) {
-    console.error('Error fetching users:', error.response ? error.response.data : error.message);
-  }
-}
-
-getUsers();
-
-
-
-
-
-
-
-
-// Function to generate JWT token
-/* router.post('/generateZoomJwtToken', (req, res) => {
-    const payload = {
-      iss: API_KEY,   // Issuer (your API key)
-      exp: Math.floor(Date.now() / 1000) + 5, // Token expiration (5 seconds in future)
-    };
+  router.get('/', async (req, res) => {
+    const code = req.query.code; // Get authorization code from Zoom
+    try {
+      const response = await axios.post('https://zoom.us/oauth/token', qs.stringify({
+        grant_type: 'authorization_code',
+        code: code,
+        redirect_uri: process.env.REDIRECT_URL
+      }), {
+        headers: {
+          'Authorization': `Basic ${Buffer.from(`${process.env.ZOOM_API_KEY}:${process.env.ZOOM_API_SECRET}`).toString('base64')}`,
+          'Content-Type': 'application/x-www-form-urlencoded'
+        }
+      });
   
-    // Generate the token
-    const token = jwt.sign(payload, API_SECRET, { algorithm: 'HS256' });
+      // Store access token and refresh token
+     
   
-    // Return the token in the response
-    res.json({ token });
-  }); */
-  
+      // Send tokens to the client
+      res.send(response.data.access_token);
+      yourZoomJwtToken =  response.data.access_token
+      console.log(yourZoomJwtToken);
+      
+    } catch (error) {
+      console.error('Error fetching access token:', error);
+      res.status(500).send('Error getting tokens');
+    }
+  });
 
-// Generate the token
-
-
-//user_id = SjU14zZjR326xAo69glG3Q
-//User ID: SjU14zZjR326xAo69glG3Q, Email: harshadabhondave09@gmail.com */
+  module.exports = router , yourZoomJwtToken
