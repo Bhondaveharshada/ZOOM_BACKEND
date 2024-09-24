@@ -29,7 +29,7 @@ const {yourZoomJwtToken} = require('./token')
 
 router.get('/get-meeting', async (req,res)=>{
   try{
-    const response =  await axios.get('https://api.zoom.us/v2/users/me/meetings',{
+    const response =  await axios.get(`https://api.zoom.us/v2/users/${ZOOM_USER_ID}/meetings`,{
      headers:{
          'Authorization': `Bearer ${yourZoomJwtToken}`
      }

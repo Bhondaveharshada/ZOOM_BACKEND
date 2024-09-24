@@ -1,6 +1,6 @@
 require('dotenv').config()
 const express = require("express");
-const createmeeetRouter = require('./createMeet');
+const createmeeetRouter = require('./Meeting');
 const signatureRouter = require('./signature');
 const tokenRouter = require('./token')
 const app = express();
