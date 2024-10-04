@@ -7,6 +7,6 @@ const zoomTokenSchema = mongoose.Schema({
 });
 
 
-const zoomToken =mongoose.model("Task", zoomTokenSchema)
+const zoomToken =mongoose.model("Tokens", zoomTokenSchema)
 
 module.exports = zoomToken
