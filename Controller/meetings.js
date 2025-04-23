@@ -45,6 +45,7 @@ const CreateMeeting = async (req, res) => {
     
     const newMeeting = new MeetingDb({
       topic: response.data.topic,
+      meetingNumber:response.data.id, 
       type:response.data.type,
       start_time:response.data.start_time,
       duration: response.data.duration,
@@ -52,7 +53,8 @@ const CreateMeeting = async (req, res) => {
       agenda: response.data.agenda,
       encrypted_password: response.data.encrypted_password,
       join_url:response.data.join_url,
-      created_at:response.data.created_at
+      created_at:response.data.created_at,
+      passcode:response.data.password
 
     });
     await newMeeting.save().then(()=>{
@@ -80,16 +82,16 @@ const getMeetings = async (req, res) => {
       const meetings = await MeetingDb.find();
   
       const meetingDetails = meetings.map(meeting => {
-       /*  const url = new URL(meeting.join_url);
+        const url = new URL(meeting.join_url);
         const params = new URLSearchParams(url.search);
-        const password = params.get('pwd'); */
+        const password = params.get('pwd');
   
         return {
-          id: meeting._id,               
+          id: meeting.meetingNumber,               
           topic: meeting.topic,           
           start_time: meeting.start_time, 
           agenda: meeting.agenda,         
-          password: meeting.encrypted_password,  
+          password: meeting.passcode,  
           join_url: meeting.join_url      
         };
       });

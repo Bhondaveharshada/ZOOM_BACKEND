@@ -6,6 +6,9 @@ const meetingSChema = mongoose.Schema({
         required:true,
         type:String
     },
+    meetingNumber:{
+        type:Number
+    },
     type:{
         type:Number,
         required:true
@@ -33,6 +36,9 @@ const meetingSChema = mongoose.Schema({
         type:String,
     },
     created_at:{
+        type:String
+    },
+    passcode:{
         type:String
     }
 });

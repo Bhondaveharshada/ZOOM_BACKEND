@@ -1,7 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const {isBetween,isRequiredAllOrNone,inNumberArray,validateRequest,isValidationError} = require('../validations')
-
+const jwt = require('jsonwebtoken')
 
 const propValidations = {
     role: inNumberArray([0, 1]),

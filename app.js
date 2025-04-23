@@ -14,7 +14,7 @@ app.use(bodyParser.urlencoded({ limit: '100mb', extended: true }));
 app.use(express.json())
 app.use(cors());
 
-mongoose.connect('mongodb://localhost:27017/ZoomTokens').then(()=>{
+mongoose.connect('mongodb+srv://manishabhondave640:qnckVxwztBcIvXVR@cluster0.i0oynzh.mongodb.net/ZoomTokens?retryWrites=true&w=majority&appName=Cluster0').then(()=>{
   console.log("mongodb connected");
 }).catch((error)=>{
   console.log("error in mongodb connection",error);
@@ -31,9 +31,6 @@ app.use((req,res,next)=>{
    }
    next()
   });
-
-
-  
   
 app.use('/',MeetingRouter)
 app.use('/',signatureRouter)
